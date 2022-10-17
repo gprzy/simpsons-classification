@@ -123,7 +123,7 @@ Esses `StackingClassifier` criados foram treinados, respectivamente, com os dado
 O modelo foi capaz de **acertar 81% das imagens**, apresentando um **weighted F1 score** de **0.8**. Segue abaixo a matriz de confusão com os acertos e erros do modelo:
 
 <div align="center">
-    <img src="./assets/cm.jpg" width="30%" height="30%"></img>
+    <img src="./assets/cm.jpg" width="40%" height="40%"></img>
 </div>
 
 ## The Simpsons Challenge 🏆
