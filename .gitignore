@@ -1,5 +1,6 @@
-# images
-*.bmp
+# ignore images data
+# data/
+*.pkl
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
