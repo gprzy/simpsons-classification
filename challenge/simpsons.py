@@ -87,6 +87,8 @@ def write_output(x, y, output_name):
     fd.close()
 
 if __name__ == '__main__':
+    print(sys.version)
+    
     parser = argparse.ArgumentParser(description='simpsons_classification')
 
     parser.add_argument('--train', required=True)

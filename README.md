@@ -122,6 +122,10 @@ Esses `StackingClassifier` criados foram treinados, respectivamente, com os dado
 
 O modelo foi capaz de **acertar 81% das imagens**, apresentando um **weighted F1 score** de **0.8**. Segue abaixo a matriz de confusão com os acertos e erros do modelo:
 
+<div align="center">
+    <img src="./assets/cm.jpg" width="50%" height="50%"></img>
+</div>
+
 ## The Simpsons Challenge 🏆
 
 O desafio visa conseguir a maior pontuação para o **weighted F1 score**. O exemplo abaixo executa o *script* que gera o arquivo de predições, passando os arquivos `train.txt` e `test.txt` com os respectivos caminhos das imagens de treino e teste de entrada, salvando as predições em `predictions.txt`.

@@ -1,6 +1,7 @@
 # ignore images data
 # data/
 *.pkl
+.devcontainer/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
