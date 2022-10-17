@@ -72,13 +72,13 @@ cd ./experiments
 ```
 
 ```bash
-python .\ml_pipeline.py --dataset '<NOME_DO_DATASET>' --data_format 'CAMPO_DO_DICIONÁRIO' --load_type '[disk|memory]'
+python ./ml_pipeline.py --dataset '<NOME_DO_DATASET>' --data_format 'CAMPO_DO_DICIONÁRIO' --load_type '[disk|memory]'
 ```
 
 O exemplo abaixo executa uma *pipeline* utilizando o *dataset* `simpsons-small-balanced` e o campo `descriptor_rgb+hsv+lbp`, carregando os dados do disco, através do arquivo `pickle`.
 
 ```bash
-python .\ml_pipeline.py --dataset 'simpsons-small-balanced' --data_format 'descriptor_rgb+hsv+lbp' --load_type 'disk'
+python ./ml_pipeline.py --dataset 'simpsons-small-balanced' --data_format 'descriptor_rgb+hsv+lbp' --load_type 'disk'
 ```
 
 A execução da *pipeline* será salva em `log`, no diretório `./logs/<NOME_DO_DATASET>.log`.
@@ -135,5 +135,5 @@ cd ./challenge
 ```
 
 ```bash
-python .\simpsons.py --train 'train.txt' --test 'test.txt' --output 'predictions.txt'
+python ./simpsons.py --train 'train.txt' --test 'test.txt' --output 'predictions.txt'
 ```
