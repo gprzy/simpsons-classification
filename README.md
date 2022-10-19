@@ -61,6 +61,7 @@ Segue abaixo um exemplo da aplicação dos descritores nas imagens:
 
 ## Pipelines  de Machine Learning ⚙
 A escolha dos dados que serão utilizados por cada modelo não foi completamente aleatória. Foram executadas várias *pipelines* de modelos, para cada um dos campos de dados carregados (exceto os dados das imagens em si, apenas descritores, histogramas e combinações). Em cada um dos modelos testados, foi utilizado o objeto `Pipeline` do `sklearn`, criando uma *pipeline* com o modelo em si e um `StandardScaler`, normalizando os dados entre 0 e 1, e então conduzindo o processo (treino e teste). Além do mais, cada *pipeline* utilizou os seguintes modelos:
+
 - `KNeighborsClassifier()`
 - `GaussianNB()`
 - `LinearSVC()`
@@ -133,16 +134,19 @@ Onde
 - $|x|$: Cardinalidade da classe $x$, ou seja, número de exemplos que a compõe;
 
 ## Estrutura do projeto 🌱
+
 ```
 simpsons-classification
 ├─ challenge/*
 ├─ data/*
 ├─ data_loader/
-│  ├─ colors.py
 │  ├─ image_descriptors.py
 │  ├─ load_data.py
 │  ├─ rename_images_names.py
 │  └─ save_data.py
+├─ utils/
+│  ├─ colors.py
+│  └─ plot_utils.py
 ├─ experiments/
 │  ├─ ml_ensemb_pipeline.py
 │  └─ ml_pipeline.py
@@ -160,6 +164,7 @@ Onde:
 - `challenge/*`: desafio dos Simpsons, com arquivo que gera predições visando obter o maior **weighted f1-score**;
 - `data/*`: imagens de treino e teste;
 - `data_loader/`: carregamento de imagens, descritores, entre outros;
+- `utils/`: funções utilitárias para *pretty print* e plotagens de gráficos e imagens;
 - `experiments/`: *pipelines* de Machine Learning com vários modelos;
 - `notebooks/*`: passo a passo e visualização de funções de módulos, *pipelines* e exemplos ilustrativos;
 - `output/*`: *output* da execução das *pipelines*;
