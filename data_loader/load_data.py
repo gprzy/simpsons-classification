@@ -1,3 +1,6 @@
+# módulo destinado a carregar os dados das imagens,
+# sejam nomes dos arquivos, features de descritores,
+# imagens de descritores, histogramas RGB, entre outros
 
 import os
 import re

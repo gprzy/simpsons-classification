@@ -17,9 +17,10 @@ from sklearn.metrics import classification_report
 
 from data_loader.load_data import ImagesLoader
 from data_loader.colors import Colors
-from simpsons_classifier import SimpsonsClassifier
-from voter import Voter as vote
-import load_stacking_models as stack
+
+from simpsons_classifier.voter import Voter as vote
+import simpsons_classifier.load_stacking_models as stack
+from simpsons_classifier.simpsons_classifier import SimpsonsClassifier
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -86,6 +87,29 @@ def write_output(x, y, output_name):
 
     fd.close()
 
+def load_images_data(dataset_name, fields):
+    loader = ImagesLoader(train_images_path=f'../data/{dataset_name}/train/',
+                          test_images_path=f'../data/{dataset_name}/test/')
+
+    data = loader.load_data(load_list=fields)
+    return data
+
+def show_data_info(data, model_fields):
+    print(f'\n{Colors.WARNING}' \
+          f'[exibindo shape dos dados carregados (X_train/X_test)]' \
+          f'{Colors.ENDC}')
+
+    for field in model_fields:
+        print(field + ' =',
+              data[field]['train'].shape,
+              data[field]['test'].shape)
+
+def load_train_test_data(data, fields):
+    X_train = [data[field]['train'] for field in fields]
+    X_test = [data[field]['test'] for field in fields]
+
+    return X_train, X_test
+
 if __name__ == '__main__':
     print(sys.version)
     
@@ -97,28 +121,9 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    start = time.time()
-    print(f'{Colors.HEADER}[PROCESSO INICIADO]{Colors.ENDC}')
-
-    # your code goes here
-    # read image data based on train path samples
-    print(f'\n{Colors.WARNING}[carregando o nome das imagens de treino e teste...]{Colors.ENDC}')
-
-    # labels das imagens de treino e teste
-    X_train_files, y_train = load_train_data(args.train)
-    X_test_files, y_test = load_test_data(args.test)
-
-    print('nome dos arquivos carregados!')
-    print('shape dos dados (y_train/y_test) =', y_train.shape, y_test.shape)
-    print('shape dos dados (X_train_files/X_test_files) =', X_train_files.shape, X_test_files.shape)
-
-    print(f'\n{Colors.WARNING}[carregando os descritores e dados das imagens...]{Colors.ENDC}')
-
-    # process and feature extraction
-    # dados de treino e teste
     DATASET_NAME = 'simpsons-small-balanced'
     
-    FIELDS = [
+    LOAD_FIELDS = [
         'images_hsv',
         'images_h',
         'images_s',
@@ -133,41 +138,49 @@ if __name__ == '__main__':
         'combination_hsv+lbp+hu',
     ]
 
-    loader = ImagesLoader(train_images_path=f'../data/{DATASET_NAME}/train/',
-                          test_images_path=f'../data/{DATASET_NAME}/test/')
+    MODEL_FIELDS = [
+        'combination_hsv+hu',
+        'descriptor_hsv'
+    ]
 
-    data = loader.load_data(load_list=FIELDS)
+    start = time.time()
+    print(f'{Colors.HEADER}[PROCESSO INICIADO]{Colors.ENDC}')
+
+    # your code goes here
+    # read image data based on train path samples
+    print(f'\n{Colors.WARNING}' \
+          f'[carregando o nome das imagens de treino e teste...]' \
+          f'{Colors.ENDC}')
+
+    # labels das imagens de treino e teste
+    X_train_files, y_train = load_train_data(args.train)
+    X_test_files, y_test = load_test_data(args.test)
+
+    print('nome dos arquivos carregados!')
+    print('shape dos dados (y_train/y_test) =',
+           y_train.shape, y_test.shape)
+
+    print('shape dos dados (X_train_files/X_test_files) =',
+           X_train_files.shape, X_test_files.shape)
+
+    print(f'\n{Colors.WARNING}[carregando os descritores e ' \
+          f'dados das imagens...]{Colors.ENDC}')
+
+    # process and feature extraction
+    data = load_images_data(dataset_name=DATASET_NAME,
+                            fields=LOAD_FIELDS)
 
     print('dados das imagens carregados!')
-    print(f'\n{Colors.WARNING}[exibindo shape dos dados carregados (X_train/X_test)]{Colors.ENDC}')
+    show_data_info(data, model_fields=MODEL_FIELDS)
 
-    for field in ['descriptor_lbp',
-                  'combination_hsv+hu',
-                  'combination_hsv+lbp+hu']:
-        print(field + ' =',
-              data[field]['train'].shape,
-              data[field]['test'].shape)
-
-    X_train = [
-        data['combination_hsv+hu']['train'],
-        data['combination_hsv+lbp+hu']['train'],
-        data['descriptor_hsv']['train'],
-    ]
-
-    X_test = [
-        data['combination_hsv+hu']['test'],
-        data['combination_hsv+lbp+hu']['test'],
-        data['descriptor_hsv']['test'],
-    ]
-
-    y_train = data['names_encoded']['train']
-    y_test = data['names_encoded']['test']
+    # dados de treino e teste
+    X_train, X_test = load_train_test_data(data, fields=MODEL_FIELDS)
 
     # training and evaluation
     print(f'\n{Colors.WARNING}[instanciando o modelo...]{Colors.ENDC}')
     
     print('carregando setup dos modelos...')
-    stacks = stack.load_stacking_models(load_type='memory')
+    stacks = stack.load_stacking_models()
 
     print('instanciando o modelo SimpsonsClassifier')
     simp = SimpsonsClassifier(stack_models=stacks)
@@ -184,10 +197,10 @@ if __name__ == '__main__':
     
     # votação
     weights = [[1, 1, 1],
-               [1, 1, 1],
-               [1, 1, 1],
-               [3, 3, 3],
-               [4, 4, 4]]
+               [1, 2, 1],
+               [1, 3, 2],
+               [2, 2, 3],
+               [3, 2, 3]]
 
     y_pred = vote.hard_voting(list(preds.values()),
                               weights=weights)

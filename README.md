@@ -36,22 +36,30 @@ Classificar os personagens dos Simpsons utilizando modelos de Machine Learning.
     </table>
 </div>
 
+## Conjuntos de imagens utilizadas
+As imagens utilizadas em treino e teste dos modelos podem ser encontradas e baixadas publicamente. Todas as imagens utilizadas podem ser encontradas nesse mesmo [repositório](). Foram utilizados ao todo, para treinamento, dois conjuntos de dados (que são distintos mas possuem intersecções); são eles:
+- `simpsons-small`: conjunto de imagens testado inicialmente;
+- `simpsons-small-balanced`: possui todas as imagens do conjunto acima, porém com um adicional de algumas imagens obtidas do conjunto [The Simpsons Characters Data (Kaggle)](https://www.kaggle.com/datasets/alexattia/the-simpsons-characters-dataset);
+
 ## Processamento das imagens 🖼
 Os dados foram carregados utilizando a classe `ImagesLoader` do módulo `data_loader.load_data.py`, lendo as imagens de treino e teste a partir do caminho especificado. Os dados são armazenados em um dicionário (`dict`) que contém o nome dos arquivos, nomes dos personagens, caminhos dos arquivos, imagens originais, redimensionadas, descritores das imagens, entre outras variações. Trata-se de uma compilação de todos os dados a serem testados em diferentes modelos.
 
 Exemplos de descritores utilizados e outros componentes das imagens:
 - Local Binary Patterns (LBP);
 - Hu moments;
-- Gabor filters;
+- Gabor;
 - HOG;
 - Histogramas RGB;
 - Histogramas HSV;
+- Combinações de dois ou mais itens;
+
+Segue abaixo um exemplo da aplicação dos descritores nas imagens:
 
 <div align="center">
     <img src="./assets/descriptors.jpg"></img>
 </div>
 
-## Pipelines ⚙
+## Pipelines  de Machine Learning ⚙
 A escolha dos dados que serão utilizados por cada modelo não foi completamente aleatória. Foram executadas várias *pipelines* de modelos, para cada um dos campos de dados carregados (exceto os dados das imagens em si, apenas descritores, histogramas e combinações). Em cada um dos modelos testados, foi utilizado o objeto `Pipeline` do `sklearn`, criando uma *pipeline* com o modelo em si e um `StandardScaler`, normalizando os dados entre 0 e 1, e então conduzindo o processo (treino e teste). Além do mais, cada *pipeline* utilizou os seguintes modelos:
 - `KNeighborsClassifier()`
 - `GaussianNB()`
@@ -65,6 +73,15 @@ A escolha dos dados que serão utilizados por cada modelo não foi completamente
 - `ExtraTreesClassifier()`
 - `MLPClassifier()`
 - `DummyClassifier(strategy='stratified')`
+- `StackingClassifier()`
+- `VotingClassifier()`
+- `BaggingClassifier()`
+
+Segue abaixo um diagrama ilustrando os passos das *pipelines*:
+
+<div align="center">
+    <image src="./assets/diagrama_pipeline.jpg" width="60%"></image>
+</div>
 
 ### Executando uma pipeline
 ```bash
@@ -92,6 +109,14 @@ pipeline "descriptor_blue" finished with SUCCESS; time elapsed=40.4574s
 pipeline "descriptor_green" finished with SUCCESS; time elapsed=41.5765s
 pipeline "descriptor_red" finished with SUCCESS; time elapsed=41.0123s
 ```
+
+### Passo a passo da execução da pipeline
+
+A execução das pipelines descrevem o passo a passo de sua execução no terminal, segue abaixo um exemplo:
+
+<div align="center">
+    <img src="./assets/pipeline_terminal_example.jpg" width="50%" height="50%"></img>
+</div>
 
 ## Métrica utilizada 📈
 A métrica escolhida para avaliar os modelos foi o F1 *score*, mais precisamente a média ponderada entre os F1 *scores* (**weighted F1 score**) das diferentes classes.
@@ -125,6 +150,40 @@ O modelo foi capaz de **acertar 81% das imagens**, apresentando um **weighted F1
 <div align="center">
     <img src="./assets/cm.jpg" width="40%" height="40%"></img>
 </div>
+
+## Estrutura do projeto
+```
+simpsons-classification
+├─ challenge/*
+├─ data/*
+├─ data_loader/
+│  ├─ colors.py
+│  ├─ image_descriptors.py
+│  ├─ load_data.py
+│  ├─ rename_images_names.py
+│  └─ save_data.py
+├─ experiments/
+│  ├─ ml_ensemb_pipeline.py
+│  └─ ml_pipeline.py
+├─ notebooks/*
+├─ output/*
+├─ simpsons-classification.ipynb
+└─ simpsons_classifier/
+   ├─ load_stacking_models.py
+   ├─ simpsons_classifier.py
+   └─ voter.py
+```
+
+Onde:
+
+- `challenge/*`: desafio dos Simpsons, com arquivo que gera predições visando obter o maior **weighted f1-score**;
+- `data/*`: imagens de treino e teste;
+- `data_loader/`: carregamento de imagens, descritores, entre outros;
+- `experiments/`: *pipelines* de Machine Learning com vários modelos;
+- `notebooks/*`: passo a passo e visualização de funções de módulos, *pipelines* e exemplos ilustrativos;
+- `output/*`: *output* da execução das *pipelines*;
+- `simpsons_classifier/`: modelo principal para classificação dos personagens dos Simpsons;
+- `simpsons-classification.ipynb`: *notebook* principal, compilando os resultados e o passo a passo realizados durante o projeto;
 
 ## The Simpsons Challenge 🏆
 

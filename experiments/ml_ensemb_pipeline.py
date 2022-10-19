@@ -25,7 +25,10 @@ from sklearn.neural_network import MLPClassifier
 
 from sklearn.ensemble import RandomForestClassifier, \
                              AdaBoostClassifier, \
-                             ExtraTreesClassifier
+                             ExtraTreesClassifier, \
+                             StackingClassifier, \
+                             VotingClassifier, \
+                             BaggingClassifier
 
 from sklearn.dummy import DummyClassifier
 
@@ -112,20 +115,67 @@ def train_test_split(data):
 def create_models():
     print(f'{Colors.WARNING}[creating models]{Colors.ENDC}')
 
+    estimators = [
+        ('lsvc', LinearSVC(random_state=42)),
+        ('mlp', MLPClassifier(random_state=42)),
+        ('lr', LogisticRegression(random_state=42)),
+        ('xgb', XGBClassifier(random_state=42)),
+        ('lgbm', LGBMClassifier(random_state=42))
+    ]
+
+    # stacking classifiers com os estimators
     models = {
-        'knn': KNeighborsClassifier(),
-        'nb': GaussianNB(),
-        'lsvc': LinearSVC(random_state=42),
-        'svc': SVC(random_state=42),
-        'lr': LogisticRegression(random_state=42),
-        'rf': RandomForestClassifier(random_state=42),
-        'lgbm': LGBMClassifier(random_state=42),
-        'xgb': XGBClassifier(random_state=42),
-        'ab': AdaBoostClassifier(random_state=42),
-        'et': ExtraTreesClassifier(random_state=42),
-        'mlp': MLPClassifier(random_state=42),
-        'dc': DummyClassifier(strategy='stratified')
+        f'stk_{estimators[i][0]}': StackingClassifier(
+            estimators=estimators,
+            final_estimator=estimators[i][1]
+        ) for i in range(len(estimators))
     }
+
+    # voting classifier com os estimators
+    models['vote'] = VotingClassifier(estimators=estimators,
+                                      voting='hard',
+                                      weights=[1, 1, 1, 1, 1])
+
+    # voting classifier com os estimators (weighted)
+    models['vote_w'] = VotingClassifier(estimators=estimators,
+                                      voting='hard',
+                                      weights=[1, 1, 1, 1, 2])
+
+    # voting classifiers com as melhores stacks
+    models['vote_stk'] = VotingClassifier(
+        estimators=[('stk_lgbm', models['stk_lgbm']),
+                    ('stk_xgb', models['stk_xgb']),
+                    ('stk_lsvc', models['stk_lsvc'])],
+        voting='hard',
+        weights=[1, 1, 1]
+    )
+
+    # stacking classifier de stacks (weighted)
+    models['vote_stk_w'] = VotingClassifier(
+        estimators=[('stk_lgbm', models['stk_lgbm']),
+                    ('stk_xgb', models['stk_xgb']),
+                    ('stk_lsvc', models['stk_lsvc'])],
+        voting='hard',
+        weights=[2, 1, 1]
+    )
+
+    # bag de lgbm
+    models['bag_lgbm'] = BaggingClassifier(
+        base_estimator=LGBMClassifier(random_state=42),
+        n_estimators=20
+    )
+
+    # bag de xgb
+    models['bag_xgb'] = BaggingClassifier(
+        base_estimator=XGBClassifier(random_state=42),
+        n_estimators=20
+    )
+
+    # bag de lsvc
+    models['bag_lsvc'] = BaggingClassifier(
+        base_estimator=LinearSVC(random_state=42),
+        n_estimators=20
+    )
 
     preds = {}
     results = {}
@@ -191,7 +241,9 @@ def save_model_reports(results, loader):
             df_results = pd.concat([df_results, df_report], axis=0)
 
     # salvar resultados
-    df_results.to_csv(f'../output/{DATASET_NAME}/pipeline_{PIPELINE_NAME}_results.csv')
+    df_results.to_csv(
+        f'../output/{DATASET_NAME}/classification-report/pipeline_ensemb_{PIPELINE_NAME}_results.csv'
+    )
 
     print('models reports saved!')
 
@@ -221,7 +273,10 @@ def save_models_confusion_matrices(results, preds, y_test, loader):
                                 f"weight f1 = " \
                                 f"{round(results[name]['weighted avg']['f1-score'], 2)}");
 
-    plt.savefig(f'../images/{DATASET_NAME}/pipeline_{PIPELINE_NAME}_cm.jpg')
+    plt.savefig(
+        f'../output/{DATASET_NAME}/confusion-matrix/pipeline_ensemb_{PIPELINE_NAME}_cm.jpg'
+    )
+    
     print('models confusion matrices saved!')
 
 if __name__ == '__main__':
@@ -245,12 +300,12 @@ if __name__ == '__main__':
         
         # train and test models
         train_and_test(models=models,
-                    preds=preds,
-                    results=results,
-                    X_train=X_train,
-                    y_train=y_train,
-                    X_test=X_test,
-                    y_test=y_test)
+                       preds=preds,
+                       results=results,
+                       X_train=X_train,
+                       y_train=y_train,
+                       X_test=X_test,
+                       y_test=y_test)
 
         print(f'{Colors.OKCYAN}{round(time.time() - start, 4)}s elapsed{Colors.ENDC}')
 
@@ -261,7 +316,7 @@ if __name__ == '__main__':
         # salvando o log da execução
         with open(f'../logs/{DATASET_NAME}.log', 'a') as logfile:
             logfile.write(
-                f'pipeline "{PIPELINE_NAME}" finished with SUCCESS; ' \
+                f'pipeline (ensembles) "{PIPELINE_NAME}" finished with SUCCESS; ' \
                 f'time elapsed={round(time.time() - start, 4)}s\n'
             )
 
@@ -275,7 +330,7 @@ if __name__ == '__main__':
         # salvando o log do erro
         with open(f'../logs/{DATASET_NAME}.log', 'a') as logfile:
             logfile.write(
-                f'pipeline "{PIPELINE_NAME}" finished with ERROR; ' \
+                f'pipeline (ensembles) "{PIPELINE_NAME}" finished with ERROR; ' \
                 f'time elapsed={round(time.time() - start, 4)}s; ' \
                 f'TRACEBACK={e}\n'
             )
