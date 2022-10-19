@@ -36,7 +36,7 @@ Classificar os personagens dos Simpsons utilizando modelos de Machine Learning.
     </table>
 </div>
 
-## Conjuntos de imagens utilizadas
+## Conjuntos de imagens utilizadas 📦
 As imagens utilizadas em treino e teste dos modelos podem ser encontradas e baixadas publicamente. Todas as imagens utilizadas podem ser encontradas nesse mesmo [repositório](). Foram utilizados ao todo, para treinamento, dois conjuntos de dados (que são distintos mas possuem intersecções); são eles:
 - `simpsons-small`: conjunto de imagens testado inicialmente;
 - `simpsons-small-balanced`: possui todas as imagens do conjunto acima, porém com um adicional de algumas imagens obtidas do conjunto [The Simpsons Characters Data (Kaggle)](https://www.kaggle.com/datasets/alexattia/the-simpsons-characters-dataset);
@@ -80,7 +80,7 @@ A escolha dos dados que serão utilizados por cada modelo não foi completamente
 Segue abaixo um diagrama ilustrando os passos das *pipelines*:
 
 <div align="center">
-    <image src="./assets/diagrama_pipeline.jpg" width="60%"></image>
+    <image src="./assets/diagrama_pipeline.jpg" width="70%"></image>
 </div>
 
 ### Executando uma pipeline
@@ -132,26 +132,7 @@ Onde
 - $x$: Classe $x$;
 - $|x|$: Cardinalidade da classe $x$, ou seja, número de exemplos que a compõe;
 
-## Criação do modelo 🛠
-O modelo criado é composto por três `StackingClassifier` treinados com combinações diferentes de dados. Cada *stack* é composta pelos seguintes modelos:
-
-- `LinearSVC`
-- `MLPClassifier`
-- `LogisticRegression`
-- `XGBClassifier`
-- `LGBMClassifier`
-
-Esses `StackingClassifier` criados foram treinados, respectivamente, com os dados da combinação de histogramas e descritores, são eles: HSV+HU, HSV+HU+LBP e HSV. Por fim, as predições de cada *stack* foram unificadas através de um sistema ponderado de votações, com pesos atribuídos de maneira distinta entre as classes.
-
-## Resultados obtidos 🎯
-
-O modelo foi capaz de **acertar 81% das imagens**, apresentando um **weighted F1 score** de **0.8**. Segue abaixo a matriz de confusão com os acertos e erros do modelo:
-
-<div align="center">
-    <img src="./assets/cm.jpg" width="40%" height="40%"></img>
-</div>
-
-## Estrutura do projeto
+## Estrutura do projeto 🌱
 ```
 simpsons-classification
 ├─ challenge/*
@@ -184,6 +165,25 @@ Onde:
 - `output/*`: *output* da execução das *pipelines*;
 - `simpsons_classifier/`: modelo principal para classificação dos personagens dos Simpsons;
 - `simpsons-classification.ipynb`: *notebook* principal, compilando os resultados e o passo a passo realizados durante o projeto;
+
+## Criação do modelo 🛠
+O modelo criado é composto por três `StackingClassifier` treinados com combinações diferentes de dados. Cada *stack* é composta pelos seguintes modelos:
+
+- `LinearSVC`
+- `MLPClassifier`
+- `LogisticRegression`
+- `XGBClassifier`
+- `LGBMClassifier`
+
+Esses `StackingClassifier` criados foram treinados, respectivamente, com os dados da combinação de histogramas e descritores, são eles: HSV+HU, HSV+HU+LBP e HSV. Por fim, as predições de cada *stack* foram unificadas através de um sistema ponderado de votações, com pesos atribuídos de maneira distinta entre as classes.
+
+## Resultados obtidos 🎯
+
+O modelo foi capaz de **acertar 81% das imagens**, apresentando um **weighted F1 score** de **0.8**. Segue abaixo a matriz de confusão com os acertos e erros do modelo:
+
+<div align="center">
+    <img src="./assets/cm.jpg" width="40%" height="40%"></img>
+</div>
 
 ## The Simpsons Challenge 🏆
 
