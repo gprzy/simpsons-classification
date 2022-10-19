@@ -16,7 +16,7 @@ import numpy as np
 from sklearn.metrics import classification_report
 
 from data_loader.load_data import ImagesLoader
-from data_loader.colors import Colors
+from utils.colors import Colors
 
 from simpsons_classifier.voter import Voter as vote
 import simpsons_classifier.load_stacking_models as stack

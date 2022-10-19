@@ -7,17 +7,9 @@ from lightgbm import LGBMClassifier
 
 from sklearn.ensemble import StackingClassifier
 
-# campos de cada stacking classifier
-fields = [
-    'combination_hsv+hu',
-    # 'combination_hsv+lbp+hu',
-    'descriptor_hsv'
-]
-
 # estimadores finais de cada stacking classifier
 final_estimators = [
-    XGBClassifier(random_state=42),
-    # LinearSVC(random_state=42),
+    LGBMClassifier(random_state=42),
     LGBMClassifier(random_state=42)
 ]
 
@@ -30,12 +22,11 @@ estimators = [
     ('lgbm', LGBMClassifier(random_state=42))
 ]
 
-models_setup = (fields, final_estimators, estimators)
+setup = (estimators, final_estimators)
 
-def load_stacking_models(setup=models_setup):
-    fields = setup[0]
+def load_stacking_models(fields, setup=setup):
+    estimators = setup[0]
     final_estimators = setup[1]
-    estimators = setup[2]
     
     # lista de stacks instanciadas
     stacks = {}

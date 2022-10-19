@@ -12,7 +12,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from data_loader.load_data import ImagesLoader
-from data_loader.colors import Colors
+from utils.colors import Colors
 
 from sklearn.preprocessing import MinMaxScaler
 

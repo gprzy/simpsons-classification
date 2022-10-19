@@ -10,7 +10,7 @@ import numpy as np
 import cv2
 
 from data_loader.image_descriptors import ImageDescriptors as desc
-from data_loader.colors import Colors
+from utils.colors import Colors
 
 class ImagesLoader():
     def __init__(self, train_images_path, test_images_path):

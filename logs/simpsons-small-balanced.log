@@ -39,3 +39,7 @@ pipeline (ensembles) "combination_rgb+hsv+hu" finished with SUCCESS; time elapse
 pipeline (ensembles) "combination_rgb+hsv+lbp+hu" finished with SUCCESS; time elapsed=891.2233s
 pipeline (ensembles) "combination_rgb+lbp" finished with SUCCESS; time elapsed=474.7128s
 pipeline (ensembles) "combination_rgb+hu" finished with SUCCESS; time elapsed=492.8664s
+pipeline (ensembles) "combination_rgb+lbp+hu" finished with SUCCESS; time elapsed=424.7936s
+pipeline (ensembles) "combination_hsv+lbp" finished with SUCCESS; time elapsed=370.679s
+pipeline (ensembles) "combination_hsv+hu" finished with SUCCESS; time elapsed=359.2173s
+pipeline (ensembles) "combination_hsv+lbp+hu" finished with SUCCESS; time elapsed=367.1612s
