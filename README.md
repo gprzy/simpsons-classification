@@ -192,12 +192,12 @@ O modelo foi capaz de **acertar 83% das imagens**, apresentando um **avg weighte
 
 ## The Simpsons Challenge 🏆
 
-O desafio visa conseguir a maior pontuação para o **weighted F1 score**. O exemplo abaixo executa o *script* que gera o arquivo de predições, passando os arquivos `train.txt` e `test.txt` com os respectivos caminhos das imagens de treino e teste de entrada, salvando as predições em `predictions.txt`.
+O desafio visa conseguir a maior pontuação para o **avg weighted f1-score**. O exemplo abaixo executa o *script* que gera o arquivo de predições, passando os arquivos `train.txt` e `test.txt` com os respectivos caminhos das imagens de treino e teste de entrada, salvando as predições em `output.txt`.
 
 ```bash
 cd ./challenge
 ```
 
 ```bash
-python ./simpsons.py --train 'train.txt' --test 'test.txt' --output 'predictions.txt'
+python ./simpsons.py --train 'train.txt' --test 'test.txt' --output 'output.txt'
 ```
