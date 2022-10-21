@@ -110,9 +110,29 @@ def load_train_test_data(data, fields):
 
     return X_train, X_test
 
-if __name__ == '__main__':
-    print(sys.version)
+DATASET_NAME = 'simpsons-small-balanced'
     
+LOAD_FIELDS = [
+    'images_hsv',
+    'images_h',
+    'images_s',
+    'images_v',
+    'descriptor_h',
+    'descriptor_s',
+    'descriptor_v',
+    'descriptor_hsv',
+    'descriptor_hu',
+    'descriptor_lbp',
+    'combination_hsv+hu',
+    'combination_hsv+lbp+hu'
+]
+
+MODEL_FIELDS = [
+    'combination_hsv+hu',
+    'descriptor_hsv'
+]
+
+if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='simpsons_classification')
 
     parser.add_argument('--train', required=True)
@@ -121,30 +141,10 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    DATASET_NAME = 'simpsons-small-balanced'
-    
-    LOAD_FIELDS = [
-        'images_hsv',
-        'images_h',
-        'images_s',
-        'images_v',
-        'descriptor_h',
-        'descriptor_s',
-        'descriptor_v',
-        'descriptor_hsv',
-        'descriptor_hu',
-        'descriptor_lbp',
-        'combination_hsv+hu',
-        'combination_hsv+lbp+hu',
-    ]
-
-    MODEL_FIELDS = [
-        'combination_hsv+hu',
-        'descriptor_hsv'
-    ]
-
     start = time.time()
+
     print(f'{Colors.HEADER}[PROCESSO INICIADO]{Colors.ENDC}')
+    print(sys.version)
 
     # your code goes here
     # read image data based on train path samples
@@ -153,6 +153,7 @@ if __name__ == '__main__':
           f'{Colors.ENDC}')
 
     # labels das imagens de treino e teste
+
     X_train_files, y_train = load_train_data(args.train)
     X_test_files, y_test = load_test_data(args.test)
 
@@ -178,41 +179,62 @@ if __name__ == '__main__':
 
     # training and evaluation
     print(f'\n{Colors.WARNING}[instanciando o modelo...]{Colors.ENDC}')
-    
     print('carregando setup dos modelos...')
-    stacks = stack.load_stacking_models()
+
+    stacks = stack.load_stacking_models(fields=MODEL_FIELDS,
+                                        stack_method='auto')
 
     print('instanciando o modelo SimpsonsClassifier')
+
     simp = SimpsonsClassifier(stack_models=stacks)
     
     print('modelo instanciado')
-
     print(f'\n{Colors.WARNING}[realizando treinamento...]{Colors.ENDC}')
+    
     simp.fit(X_train, y_train)
+    
     print('treinamento finalizado!')
+
+    # # carregando modelo do disco
+    # simp = SimpsonsClassifier.load_model_from_disk(
+    #     path='../simpsons_classifier/simpsons_classifier.sav'
+    # )
 
     preds = simp.predict(X_test)
 
+    print(f'\n{Colors.WARNING}[exibindo o report das stacks]{Colors.ENDC}')
+
+    for field in MODEL_FIELDS:
+        print(field)
+        print(classification_report(y_test, preds[field]))
+
     print(f'\n{Colors.WARNING}[realizando uma votação com as predições]{Colors.ENDC}')
     
-    # votação
-    weights = [[1, 1, 1],
-               [1, 2, 1],
-               [1, 3, 2],
-               [2, 2, 3],
-               [3, 2, 3]]
+    # # otimização nos pesos
+    # weights, weighted_f1 = vote.hard_voting_random_optimization(
+    #     preds=preds,
+    #     y_test=y_test,
+    #     n=10000,
+    #     verbose=True
+    # )
+
+    weights = [[1, 1, 4],
+               [4, 3, 3],
+               [3, 2, 1],
+               [2, 3, 4],
+               [1, 2, 3]]
 
     y_pred = vote.hard_voting(list(preds.values()),
                               weights=weights)
 
     print('votação concluída!\n')
         
-    # a dummy prediction (random)
-    # to better illustrate, lets say that random function
-    # could predict test samples; so, the 'y' is an array
-    # of the same size as X_test. Both arrays are direct related
-
+    # # a dummy prediction (random)
+    # # to better illustrate, lets say that random function
+    # # could predict test samples; so, the 'y' is an array
+    # # of the same size as X_test. Both arrays are direct related
     # y_pred = np.random.randint(0, 6, size=X_test.shape[0])
+
     print(classification_report(y_test, y_pred))
 
     # writes the result to the output
@@ -220,7 +242,9 @@ if __name__ == '__main__':
     # y_pred == predicted labels
 
     print(f'{Colors.WARNING}[salvando as predições...]{Colors.ENDC}')
+
     write_output(X_test_files, y_pred, args.output)
+
     print('predições salvas!')
 
     print(f'\n{Colors.OKGREEN}[SUCESSO]{Colors.ENDC} processo finalizado!')

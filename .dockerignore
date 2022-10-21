@@ -1,3 +1,4 @@
-/simpsons-small
+/data/*
 *.csv
-/images
+/assets/*
+*.pkl

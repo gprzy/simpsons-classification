@@ -5,12 +5,12 @@ import numpy as np
 
 from simpsons_classifier.voter import Voter
 
+import pickle
+
 class SimpsonsClassifier():
     """
     Modelo de classificação dos personagens dos Simpsons
     """
-    def __str__(self):
-        return __class__.__name__ + f'({self.fieds})'
     
     def __init__(self, stack_models={}):
         # dicionário de (campos: stacks)
@@ -25,6 +25,9 @@ class SimpsonsClassifier():
         # dicionários de predições
         self.preds = {}
         self.preds_proba = {}
+
+    def __str__(self):
+        return __class__.__name__ + f'({self.fields})'
 
     def fit(self,
             X_train: list or np.array,
@@ -56,3 +59,13 @@ class SimpsonsClassifier():
             y_pred = stack.predict_proba(x_test)
             self.preds_proba[field] = y_pred
         return self.preds_proba
+
+    @staticmethod
+    def save_model_to_disk(path, model, filename):
+        pickle.dump(model, open(path + filename, 'wb'))
+        print('model saved!')
+
+    @staticmethod
+    def load_model_from_disk(path):
+        simp = pickle.load(open(path, 'rb'))
+        return simp

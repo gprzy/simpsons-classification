@@ -191,7 +191,7 @@ def save_model_reports(results, loader):
             df_results = pd.concat([df_results, df_report], axis=0)
 
     # salvar resultados
-    df_results.to_csv(f'../output/{DATASET_NAME}/pipeline_{PIPELINE_NAME}_results.csv')
+    df_results.to_csv(f'../output/{DATASET_NAME}/classification-report/pipeline_{PIPELINE_NAME}_results.csv')
 
     print('models reports saved!')
 
@@ -221,7 +221,7 @@ def save_models_confusion_matrices(results, preds, y_test, loader):
                                 f"weight f1 = " \
                                 f"{round(results[name]['weighted avg']['f1-score'], 2)}");
 
-    plt.savefig(f'../images/{DATASET_NAME}/pipeline_{PIPELINE_NAME}_cm.jpg')
+    plt.savefig(f'../output/{DATASET_NAME}/confusion-matrix/pipeline_{PIPELINE_NAME}_cm.jpg')
     print('models confusion matrices saved!')
 
 if __name__ == '__main__':
