@@ -81,3 +81,15 @@ def plot_cases(y_test,
                                     f'pred={ImagesLoader.decoded_labels[pred]}');
         except:
             pass
+
+def plot_nn_history(history, figsize=(8,4)):
+    fig, ax = plt.subplots(1,2, figsize=figsize)
+
+    for i, field in enumerate(['acc', 'loss']):
+        ax[i].plot(history.history[field])
+        ax[i].plot(history.history[f'val_{field}'])
+        ax[i].set_title(f'model {field}')
+        ax[i].set_ylabel(field)
+        ax[i].set_xlabel('epoch')
+        ax[i].legend(['train', 'val'], loc='upper left')
+    plt.show()
