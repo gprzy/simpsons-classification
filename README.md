@@ -1,5 +1,7 @@
 # Simpsons Classification
 
+<img src="https://github.com/gprzy/credit-scoring/blob/main/assets/puc.png" width="30%" height="30%"/>
+
 <div align="center">
     <img src="./assets/homer.png" width=40% height=40%></img>
 </div>
